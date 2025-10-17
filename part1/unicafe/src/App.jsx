@@ -1,11 +1,10 @@
 import { useState } from 'react'
 
-
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
   </button>
-)
+) 
 
 const App = () => {
   const [good, setGood] = useState(0)
