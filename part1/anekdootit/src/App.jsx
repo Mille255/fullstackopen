@@ -20,30 +20,37 @@ const App = () => {
   ]
   
   const [selected, setSelected] = useState(0)
-  const [points, setPoints] =  useState(Array(8).fill(0)); // Siirretään tilaan
+  const [points, setPoints] =  useState(Array(8).fill(0)) // Siirretään tilaan
+  const [mostVoted, setMostVoted] = useState(0);
   
   const handleNext = () => {
-    const randomNum = Math.floor(Math.random() * anecdotes.length);
+    const randomNum = Math.floor(Math.random() * anecdotes.length)
     console.log(randomNum)
     setSelected(randomNum)
   }
 
   const handleVote = () => {
     const copy = [ ...points ]
-    console.log(copy) 
     copy[selected] += 1 
     setPoints(copy)
+    console.log(copy)
+    const maxPointsIndex = copy.indexOf(Math.max(...copy))
+    console.log('Most voted anecdote index:', maxPointsIndex)
+    setMostVoted(maxPointsIndex)
   }
 
   return (
     <div>
-      <h1>Anecdotes</h1>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>Has {points[selected]} votes</p>
       <div>
       <Button handleClick={handleVote} text='Vote'/>
       <Button handleClick={handleNext} text='next anecdote'/>
       </div>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[mostVoted]}</p>
+      <p>Has {points[mostVoted]} votes</p>
     </div>
   )
 }
