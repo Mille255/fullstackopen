@@ -1,9 +1,14 @@
 const Course = ({course}) => {
   
+  let sum = course.parts.reduce(function(prev, current) {
+    return prev + +current.exercises
+  }, 0);
+
   return (
     <div>
       <Header course={course}/>
       <Content course={course} />
+     <h4>Total of {sum} exercises</h4>
     </div>
   )
 }
