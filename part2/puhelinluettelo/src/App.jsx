@@ -67,7 +67,7 @@ const App = () => {
       .then(response => {
         const persons = response.data;
         console.log(persons);
-        setPersons(response.data);
+        setPersons(persons);
       });
   }, []);
 
@@ -82,11 +82,15 @@ const App = () => {
     if (nameExists) {
     alert(`${newName} on jo lisätty listalle`)
     }else {
-    setPersons(persons.concat(nameObject))
+    axios
+      .post('http://localhost:3001/persons', nameObject)
+      .then(response => {
+    setPersons(persons.concat(response.data))
     setNewName('')
     setNewNumber('')
-      }
+      })
     }
+  }
 
    const handleNameChange = (event) => {
     console.log(event.target.value)
