@@ -128,12 +128,21 @@ const App = () => {
               person.id === existingPerson.id ? updatedPerson : person))
           setNewName('')
           setNewNumber('')
+          setMessageType('success');
+          setErrorMessage(`Updated ${newName}'s number`)
+          setTimeout(() => {
+          setErrorMessage(null)
+            }, 5000)
+          })
+        .catch((error) => {
+          console.error('Update failed:', error)
+          setMessageType('error');
+          setErrorMessage(`Information of ${newName} has already been removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
-      setMessageType('success');
-      setErrorMessage(`Updated ${newName}'s number`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+     
       } else {
         console.log("User canceled the action.")
       }
