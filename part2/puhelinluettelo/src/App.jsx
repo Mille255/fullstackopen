@@ -34,23 +34,61 @@ const PersonForm = ({ addName, newName, newNumber, handleNameChange, handleNumbe
   )
 }
 
-const Persons = ({persons}) => {
+const Persons = ({persons, handleDelete}) => {
   return (
     <div>
-    {persons.map((person, index) => (
-      <Person key={index} name={person.name} number={person.number}/>
+    {persons.map((person) => (
+      <Person 
+      key={person.id} 
+      person={person}
+      handleDelete={() => handleDelete(person.id)}
+      />
     ))}
     </div>
   ) 
 }
 
-const Person = ({name, number }) => {
+const Person = ({person, handleDelete }) => {
   return (
     <div>
-       <p>{name} {number}</p>
+       <p>{person.name} {person.number} {' '} 
+       <button onClick={handleDelete}>delete</button></p>
     </div>
     
   ) 
+}
+
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  const notificationStyle = {
+    color: type === 'error' ? 'red' : 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  };
+
+  return <div style={notificationStyle}>{message}</div>;
+}
+
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+
+  return (
+    <div style={footerStyle}>
+      <br />
+      <em>Phonebook by Mille, Department of Computer Science, University of Helsinki 2025</em>
+    </div>
+  )
 }
 
 
@@ -59,33 +97,68 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [messageType, setMessageType] = useState('success')
 
   useEffect(() => {
-  console.log('effect')
-  personService
-    .getAll()
-    .then(response => {
-      setPersons(response.data)
-    })
-}, [])
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons);
+      })
+  }, [])
+
   const addName = (event) => {
     event.preventDefault()
     const nameObject = {
       name: newName,
-      id: newName,
       number: newNumber,
     }
     const nameExists = persons.some(person => person.name === newName);
     if (nameExists) {
-    alert(`${newName} on jo lisätty listalle`)
+      setMessageType('error');
+      setErrorMessage(`Name ${newName} is already added to Numbers list`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }else {
     personService
-      .create(nameObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
-      })
+    .create(nameObject)
+    .then(returnedPerson => { 
+    setPersons(persons.concat(returnedPerson))
+    setNewName('')
+    setNewNumber('')
+    setMessageType('success');
+    setErrorMessage(`Added ${newName} `)
+    setTimeout(() => {
+    setErrorMessage(null)
+      }, 5000)
+
+    })
+    }
+  }
+
+  const handleDelete = (id) => {
+    const person = persons.find(p => p.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id));
+          setMessageType('success');
+          setErrorMessage(`Deleted ${person.name}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        })
+        .catch(error => {
+          console.error('Delete failed:', error);
+          setMessageType('error');
+          setErrorMessage(`Failed to delete ${person.name}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
   }
 
@@ -114,6 +187,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
       <h3>add a new</h3>
+      <Notification message={errorMessage} type={messageType} />
        <PersonForm 
         addName={addName} 
         newName={newName}
@@ -122,7 +196,8 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} handleDelete={handleDelete}/>
+      <Footer />
     </div>
   )
 
