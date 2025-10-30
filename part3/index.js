@@ -6,17 +6,21 @@ const app = express()
 app.use(morgan('tiny'))
 app.use(express.json())
 
-morgan.token('custom-id', (req) => req.headers['x-custom-id'] || 'no-id');
+// Custom Morgan tokens
+morgan.token('custom-name', (req) => req.body.name || 'no-name');
+morgan.token('custom-number', (req) => req.body.number || 'no-number');
+
+
 
 app.use(
-  morgan(':method :url :status :res[content-length] - :response-time ms :custom-id')
+  morgan(':method :url :status :res[content-length] - :response-time ms {"name":":custom-name","number":":custom-number"}')
 );
 
 
 let persons = [
     {
         id: "1",
-        name: "Arto Hellas",
+        name: "Arto Hellas", 
         number: "040-12345"
       },
       {
