@@ -114,27 +114,42 @@ const App = () => {
       name: newName,
       number: newNumber,
     }
-    const nameExists = persons.some(person => person.name === newName);
-    if (nameExists) {
-      setMessageType('error');
-      setErrorMessage(`Name ${newName} is already added to Numbers list`)
+    const existingPerson  = persons.find((person) => person.name === newName);
+    if (existingPerson ) {
+      const userConfirmed = window.confirm(`Name ${newName} is already added to phonebook, replace old number with a new one?`)
+      if (userConfirmed) {
+        console.log("User confirmed the action.");
+        // Perform the update action here
+        personService
+        .updateNumber(existingPerson.id, { ...existingPerson, number: newNumber })
+        .then((updatedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === existingPerson.id ? updatedPerson : person))
+          setNewName('')
+          setNewNumber('')
+        })
+      setMessageType('success');
+      setErrorMessage(`Updated ${newName}'s number`)
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-    }else {
+      } else {
+        console.log("User canceled the action.")
+      }
+    } else {
     personService
     .create(nameObject)
-    .then(returnedPerson => { 
-    setPersons(persons.concat(returnedPerson))
+    .then(returnedName => { 
+    setPersons(persons.concat(returnedName))
     setNewName('')
     setNewNumber('')
     setMessageType('success');
     setErrorMessage(`Added ${newName} `)
     setTimeout(() => {
-    setErrorMessage(null)
+      setErrorMessage(null)
       }, 5000)
-
-    })
+	})
     }
   }
 

@@ -21,6 +21,19 @@ const create = newObject => {
     });
   }
 
+const updateNumber = (id, updatedObject) => {
+    return axios.put(`${baseUrl}/${id}`,updatedObject )
+    .then(response => {
+        console.log(`Person ${id} number was updated`)
+        return response.data
+        })
+        .catch(error => {
+            console.error(`Failed to update person ${id}:`, error)
+            throw error
+        });
+}
+
+
   const deletePerson = (id) => {
     return axios.delete(`${baseUrl}/${id}`)
         .then(response => {
@@ -33,4 +46,4 @@ const create = newObject => {
         });
 }
 
-  export default {getAll, create, deletePerson}
+  export default {getAll, create, deletePerson, updateNumber}
