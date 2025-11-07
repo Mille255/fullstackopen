@@ -1,6 +1,5 @@
 const express = require('express')
 const morgan = require('morgan')
-const cors = require('cors')
 const app = express()
 
 app.use(express.static('dist'))  
@@ -12,8 +11,6 @@ morgan.token('custom-name', (req) => (req.body && req.body.name) ? req.body.name
 morgan.token('custom-number', (req) => (req.body && req.body.number) ? req.body.number : 'no-number')
 
 app.use(morgan('tiny'))
-app.use(cors())
-
 
 
 app.use(
