@@ -1,9 +1,11 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
+const Person = require('./models/person')
+
 const app = express()
 
 app.use(express.static('dist'))  
-
 app.use(express.json())
 
 // Custom Morgan tokens
@@ -12,6 +14,9 @@ morgan.token('custom-number', (req) => (req.body && req.body.number) ? req.body.
 
 app.use(morgan('tiny'))
 
+const password = process.argv[2]
+const url = `mongodb+srv://fullstack:${password}@cluster0.rpqga.mongodb.net/personApp?
+retryWrites=true&w=majority&appName=Cluster0`
 
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms {"name":":custom-name","number":":custom-number"}')
@@ -58,8 +63,10 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
+    Person.find({}).then(persons => {
     response.json(persons)
    })
+})
 
   
 app.get('/api/persons/:id', (request, response) => {
