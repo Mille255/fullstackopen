@@ -14,10 +14,6 @@ morgan.token('custom-number', (req) => (req.body && req.body.number) ? req.body.
 
 app.use(morgan('tiny'))
 
-const password = process.argv[2]
-const url = `mongodb+srv://fullstack:${password}@cluster0.rpqga.mongodb.net/personApp?
-retryWrites=true&w=majority&appName=Cluster0`
-
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms {"name":":custom-name","number":":custom-number"}')
 );
@@ -70,14 +66,13 @@ app.get('/api/persons', (request, response) => {
 
   
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+    Person.findById(request.params.id).then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
   })
 
   app.delete('/api/persons/:id', (request, response) => {
@@ -101,24 +96,23 @@ app.get('/api/persons/:id', (request, response) => {
         })
       }
 
-    if (persons.find(person => person.name === body.name)) {
+   /* if (persons.find(person => person.name === body.name)) {
         return response.status(400).json({ 
           error: 'name must be unique' 
         })
       } 
-    
-    const person = {
-    id: generateId(),        
+    */
+    const person = new Person({
     name: body.name,
     number: body.number,
-    }
+    })
 
-    persons = persons.concat(person)
-    console.log(person)
-    response.json(person)
+    person.save() .then(savedPerson => {
+        response.json(savedPerson)
+    })
   })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
