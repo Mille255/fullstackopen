@@ -46,6 +46,11 @@ let persons = [
 ]
 
 
+app.get('/', (req, res) => {
+  res.send('<h1>Phonebook backend is running</h1>');
+});
+
+
 app.get('/info', (request, response) => {
     const currentTime = new Date()
     const number = persons.length 
