@@ -159,7 +159,12 @@ const App = () => {
       setErrorMessage(null)
       }, 5000)
 	})
-    }
+    .catch((error) => {
+      console.error('Creation failed:', error)
+      setMessageType('error');
+      setErrorMessage(`${error.response.data.error}`)
+    } )
+   }
   }
 
   const handleDelete = (id) => {
