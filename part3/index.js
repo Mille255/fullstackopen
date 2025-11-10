@@ -25,13 +25,19 @@ app.get('/', (req, res) => {
 
 
 app.get('/info', (request, response) => {
-    const currentTime = new Date()
-    const count = Person.countDocuments({}) 
-    response.send(`
-  <p>Phonebook has info for ${count} people</p>
-  <p>${currentTime}</p>
-`)
-})
+  const currentTime = new Date();
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${currentTime}</p>
+      `);
+    })
+    .catch(error => {
+      console.error(error);
+      response.status(500).send('Error fetching info');
+    });
+});
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => {
@@ -80,10 +86,36 @@ app.get('/api/persons/:id', (request, response, next) => {
     number: body.number,
     })
 
-    person.save() .then(savedPerson => {
-        response.json(savedPerson)
-    })
+    person.save() 
+        .then(savedPerson => response.json(savedPerson)
+    )
   })
+
+  app.put('/api/persons/:id', (request, response, next) => {
+  const { name, number } = request.body;
+
+  // Validaatio: molempien pitää olla annettuja
+  if (!name || !number) {
+    return response.status(400).json({ error: 'name or number is missing' });
+  }
+
+  const updatedPerson = { name, number };
+
+  Person.findByIdAndUpdate(
+    request.params.id,
+    updatedPerson,
+    { new: true, runValidators: true, context: 'query' } // tärkeää validointia varten
+  )
+    .then(result => {
+      if (result) {
+        response.json(result);
+      } else {
+        response.status(404).end(); // id:tä ei löytynyt
+      }
+    })
+    .catch(next);
+});
+
 
 // Error handling middleware
 const unknownEndpoint = (request, response) => {
