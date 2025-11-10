@@ -132,15 +132,15 @@ const App = () => {
           setErrorMessage(`Updated ${newName}'s number`)
           setTimeout(() => {
           setErrorMessage(null)
-            }, 5000)
+            }, 4000)
           })
         .catch((error) => {
           console.error('Update failed:', error)
           setMessageType('error');
-          setErrorMessage(`Information of ${newName} has already been removed from server`)
+          setErrorMessage(`Information of ${newName} has not been updated to server`)
           setTimeout(() => {
             setErrorMessage(null)
-          }, 5000)
+          }, 4000)
         })
      
       } else {
@@ -157,7 +157,7 @@ const App = () => {
     setErrorMessage(`Added ${newName} `)
     setTimeout(() => {
       setErrorMessage(null)
-      }, 5000)
+      }, 4000)
 	})
     .catch((error) => {
       console.error('Creation failed:', error)
@@ -178,7 +178,7 @@ const App = () => {
           setErrorMessage(`Deleted ${person.name}`);
           setTimeout(() => {
             setErrorMessage(null);
-          }, 5000);
+          }, 4000);
         })
         .catch(error => {
           console.error('Delete failed:', error);
@@ -186,7 +186,7 @@ const App = () => {
           setErrorMessage(`Failed to delete ${person.name}`);
           setTimeout(() => {
             setErrorMessage(null);
-          }, 5000);
+          }, 4000);
         });
     }
   }
