@@ -107,6 +107,36 @@ describe('Deletion of a blog', () => {
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 })
 
+}) 
+
+
+describe('Update of blogs', () => {
+  beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
+    })    
+
+  test('a blog likes field is updated', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+  const updatedBlog = {
+    likes: blogToUpdate.likes + 1
+  }
+  
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  assert.strictEqual(response.body.likes, updatedBlog.likes)
+
+  
+})
+
 
 }) 
 

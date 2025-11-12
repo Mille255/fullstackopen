@@ -29,4 +29,21 @@ blogsRouter.delete('/:id', async (request, response) => {
   response.status(204).end()
 })
 
+blogsRouter.put('/:id', async (request, response, next) => {
+  try {
+    const result = await Blog.findByIdAndUpdate(
+      request.params.id,
+      { likes: request.body.likes },
+      { new: true, runValidators: true, context: 'query' }
+    )
+    if (result) {
+      response.json(result)
+    } else {
+      response.status(404).end()
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = blogsRouter
