@@ -44,6 +44,17 @@ test('all blogs are returned', async () => {
   assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
+test('returned blogs contain id field', async () => {
+  const response = await api.get('/api/blogs')
+  const blogs = response.body
+
+  for (const blog of blogs) {
+    assert.ok(blog.id, 'Blogilla has id-field')
+    assert.strictEqual(blog._id, undefined, 'Blog should not have _id-fields')
+  } 
+  
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
