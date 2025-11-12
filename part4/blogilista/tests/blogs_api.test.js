@@ -64,7 +64,7 @@ test('a valid blog can be added ', async () => {
   assert(contents.includes('Kolmas kurjuus'))
 })
 
-test('a blog without likes shoul be set to 0', async () => {
+test('a blog without likes should be set to 0', async () => {
   const newBlog = {
     title: "Kolmas kurjuus",
     author: "Heikki Ojanperä",
@@ -78,6 +78,42 @@ test('a blog without likes shoul be set to 0', async () => {
     .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(response.body.likes, 0)
+
+})
+
+test('blog without title should not be saved', async () => {
+  const newBlog = {
+    author: "Heikki Ojanperä",
+    url: "www.Hipera.fi",
+    likes: 11,
+  }
+
+   const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+
+})
+
+test('blog without url should not be saved', async () => {
+  const newBlog = {
+    title: "Kolmas kurjuus",
+    author: "Heikki Ojanperä",
+    likes: 11,
+  }
+
+   const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 
 })
 
