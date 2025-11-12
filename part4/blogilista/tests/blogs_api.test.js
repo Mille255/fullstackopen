@@ -64,6 +64,23 @@ test('a valid blog can be added ', async () => {
   assert(contents.includes('Kolmas kurjuus'))
 })
 
+test('a blog without likes shoul be set to 0', async () => {
+  const newBlog = {
+    title: "Kolmas kurjuus",
+    author: "Heikki Ojanperä",
+    url: "www.Hipera.fi"
+  }
+
+   const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.likes, 0)
+
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
