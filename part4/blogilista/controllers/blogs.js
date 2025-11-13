@@ -24,17 +24,22 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(400).json({ error: 'title or url missing' })
   }  
 
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  const token = request.token  // tokenExtractor on jo tallentanut tokenin
+  let decodedToken
+  try {
+    decodedToken = jwt.verify(token, process.env.SECRET)
+  } catch (err) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
+  
   const user = await User.findById(decodedToken.id)
-
   if (!user) {
     return response.status(400).json({ error: 'userId missing or not valid' })
   }
-
-  
 
   const blog = new Blog ({
     title: body.title,

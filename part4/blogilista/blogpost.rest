@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdWtlIiwiaWQiOiI2OTE1OTY3NjE4OWU1ZTdhYzQ5NDMyNjQiLCJpYXQiOjE3NjMwMjg1NTB9.lO-DpUDz2cSx0tngrL5iTOvuReoNzMjMeE9gu-vkgGM
 
 {
-    title: "Kolmas kurjuus",
-    author: "Masa Lukka",
-    url: "www.Hipera.fi",
-    likes: 11,
+    "title": "Neljä vaaraa",
+    "author": "Masa Lukka",
+    "url": "www.Hipera.fi",
+    "likes": 7
 }
