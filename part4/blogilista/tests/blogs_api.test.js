@@ -47,7 +47,20 @@ test('returned blogs contain id field', async () => {
 
 describe('addition of a new blog', () => {
 
+beforeEach(async () => {
+  await User.deleteMany({})
 
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', passwordHash })
+
+  await user.save()
+
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'sekret' })
+
+  token = loginResponse.body.token
+})
 test('a valid blog can be added ', async () => {
   const newBlog = {
     title: "Kolmas kurjuus",
@@ -58,6 +71,7 @@ test('a valid blog can be added ', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -78,6 +92,7 @@ test('a blog without likes should be set to 0', async () => {
 
    const response = await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -88,10 +103,33 @@ test('a blog without likes should be set to 0', async () => {
 })  
 
 describe('Deletion of a blog', () => {
+  
   beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
-    })    
+    await Blog.deleteMany({})
+    await User.deleteMany({})
+   
+    // luodaan käyttäjä
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+    const savedUser = await user.save() 
+   
+    // luodaan blogi, joka liittyy käyttäjään
+    const blogObject = new Blog({
+      title: 'Poistettava blogi',
+      author: 'Testaaja',
+      url: 'http://example.com',
+      likes: 1,
+      user: savedUser._id
+    })
+     await blogObject.save() 
+    
+     // kirjautuminen
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
+
+    token = loginResponse.body.token
+  })    
 
   test('a blog can be deleted', async () => {
     const blogsAtStart = await helper.blogsInDb()
@@ -99,6 +137,7 @@ describe('Deletion of a blog', () => {
 
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${token}`)
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
@@ -106,7 +145,7 @@ describe('Deletion of a blog', () => {
   const contents = blogsAtEnd.map(n => n.title)
   assert(!contents.includes(blogToDelete.title))
 
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  assert.strictEqual(blogsAtEnd.length, 0)
 })
 
 }) 
