@@ -3,16 +3,37 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  const notificationStyle = {
+    color: type === 'error' ? 'red' : 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  };
+
+  return <div style={notificationStyle}>{message}</div>;
+}
+
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null) 
   const [errorMessage, setErrorMessage] = useState(null)
+  const [messageType, setMessageType] = useState('success')
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
+  
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -41,7 +62,8 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch {
-      setErrorMessage('wrong credentials')
+      setMessageType('error');
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -64,11 +86,18 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
-  } 
+    setMessageType('success');
+    setErrorMessage(`a new blog ${title} by ${author} added`)
+      setTimeout(() => {
+      setErrorMessage(null)
+        }, 4000)
+    }
+   
 
   const loginForm = () => (
   <>
-    <h2>Login</h2>
+    <h2>Log in to application</h2>
+      <Notification message={errorMessage} type={messageType} />
     <form onSubmit={handleLogin}>
       <div>
         <label>
@@ -92,13 +121,14 @@ const App = () => {
       </div>
       <button type="submit">login</button>
     </form>
-    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+   
   </>
   )
 
   const blogslist = () => (
   <>
     <h2>Blogs</h2>
+     <Notification message={errorMessage} type={messageType} />
      {user && (
       <div>
         <p>{user.name} logged in 
