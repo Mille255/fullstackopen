@@ -32,6 +32,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [createVisible, setCreateVisible] = useState(false)
 
   
   useEffect(() => {
@@ -83,6 +84,7 @@ const App = () => {
     } 
     const createdBlog = await blogService.create(newBlog)
     setBlogs(blogs.concat(createdBlog))
+    setCreateVisible(false)
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -125,8 +127,13 @@ const App = () => {
   </>
   )
 
-  const blogslist = () => (
-  <>
+  const blogslist = () => {
+    const hideWhenVisible = { display: createVisible ? 'none' : '' }
+    const showWhenVisible = { display: createVisible ? '' : 'none' }
+    
+ return   (
+    
+  <div>
     <h2>Blogs</h2>
      <Notification message={errorMessage} type={messageType} />
      {user && (
@@ -136,6 +143,10 @@ const App = () => {
         </p>
       </div>
     )}
+    <div style={hideWhenVisible}>
+        <button onClick={() => setCreateVisible(true)}>create new blog</button>
+    </div>
+    <div style={showWhenVisible}>
     <h2>create new</h2>
     <form onSubmit={handleBlogSubmit }>
       <div> 
@@ -170,11 +181,14 @@ const App = () => {
       </div>
     <button type="submit">create</button>
     </form>
+    <button onClick={() => setCreateVisible(false)}>cancel</button>
+    </div>
+    <br />
     {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-    </>
-  )
+    </div>
+  )}
 
   return (
     <div>
