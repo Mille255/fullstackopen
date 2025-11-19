@@ -95,6 +95,18 @@ const App = () => {
       }, 5000)
     })  
   }
+
+  const handleLike = async (blog) => {
+    const updatedBlog = { 
+      ...blog, 
+      likes: blog.likes + 1 
+    }
+
+    const returnedBlog = await
+      blogService
+      .updateBlog(blog.id, updatedBlog) 
+    setBlogs(blogs.map(b => b.id !== blog.id ? b : returnedBlog))
+  }
    
 
   const loginForm = () => (
@@ -147,7 +159,7 @@ const App = () => {
     </Togglable>
     <br />
     {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user}/>
+        <Blog key={blog.id} blog={blog} user={user} handleLike={handleLike}/>
       )}
     </div>
   )}
