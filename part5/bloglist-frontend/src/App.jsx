@@ -101,16 +101,31 @@ const App = () => {
     })  
   }
 
+  const handleRemove = async (blog) => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      return
+    }   
+    blogService
+      .removeBlog(blog.id) 
+      setBlogs(blogs.filter(b => b.id !== blog.id))   
+      setMessageType('success');
+      setErrorMessage(`blog ${blog.title} by ${blog.author} removed`) 
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+  }
+
   const handleLike = async (blog) => {
     const updatedBlog = { 
       ...blog, 
-      likes: blog.likes + 1 
+      likes: blog.likes + 1, 
+       user: blog.user.id ? blog.user.id : blog.user
     }
 
     const returnedBlog = await
       blogService
       .updateBlog(blog.id, updatedBlog) 
-    setBlogs(blogs.map(b => b.id !== blog.id ? b : returnedBlog))
+      setBlogs(blogs.map(b => b.id === blog.id ? returnedBlog : b))
   }
    
 
@@ -164,7 +179,7 @@ const App = () => {
     </Togglable>
     <br />
     {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} handleLike={handleLike}/>
+        <Blog key={blog.id} blog={blog} user={user} handleLike={handleLike} handleRemove={handleRemove}/>
       )}
     </div>
   )}
