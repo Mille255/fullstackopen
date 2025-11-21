@@ -3,7 +3,7 @@ import { useState } from 'react'
 const Blog = ({ blog, user, handleLike, handleRemove }) => {
   console.log('blog.user:', blog.user)
   console.log('current user:', user)
-  
+
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -20,7 +20,7 @@ const Blog = ({ blog, user, handleLike, handleRemove }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   return (
     <>
       <div style={{ ...blogStyle, ...hideWhenVisible }}>
@@ -35,9 +35,9 @@ const Blog = ({ blog, user, handleLike, handleRemove }) => {
         <div>likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button></div>
         <div>{blog.user.name}</div>
         {user && blog.user.id === user.id && (
-        <div><button onClick={() => handleRemove(blog)}
-           style={{ backgroundColor: "#66b3ff", color: "black" }}
-         >remove</button> </div>
+          <div><button onClick={() => handleRemove(blog)}
+            style={{ backgroundColor: '#66b3ff', color: 'black' }}
+          >remove</button> </div>
         )}
       </div>
     </>
