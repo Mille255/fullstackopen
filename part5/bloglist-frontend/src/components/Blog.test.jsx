@@ -70,3 +70,36 @@ test('shows url, likes and user when the "view" button is clicked', async () => 
   expect(screen.getByText('TestUser')).toBeVisible()
 })
   
+test('if like button is clicked twice, the event handler is called twice', async () => {
+   const blog = {
+    title: 'Kolmas kurjuus',
+    author: 'Heikki Ojanperä',
+    url: 'www.Hipera.fi',
+    likes: 11,
+    user: {
+      name: 'TestUser'
+    }
+  } 
+  const mockUser = {
+    id: '642f1b2f4f1a25630c5e8b9d',
+    username: 'testuser',
+    name: 'TestUser'
+  }
+
+  const mockLikeHandler = vi.fn()
+
+  render(
+    <Blog blog={blog} user={mockUser} handleLike={mockLikeHandler} />
+  )
+
+  const user = userEvent.setup()
+
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockLikeHandler).toHaveBeenCalledTimes(2)
+})  
