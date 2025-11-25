@@ -10,7 +10,7 @@ test('renders content', () => {
     author: 'Heikki Ojanperä',
     url: 'www.Hipera.fi',
     likes: 11,
-   user: {
+    user: {
       name: 'TestUser'
     }
   }
@@ -22,7 +22,7 @@ test('renders content', () => {
   }
 
   render(<Blog blog={blog} user={mockUser} />)
-  
+
   const divs = screen.getAllByText(/Kolmas kurjuus/)
   const visibleDiv = divs.find(div => div.style.display !== 'none')
   expect(visibleDiv).toBeInTheDocument()
@@ -30,7 +30,7 @@ test('renders content', () => {
 
 
 test('shows url, likes and user when the "view" button is clicked', async () => {
-   const blog = {
+  const blog = {
     title: 'Kolmas kurjuus',
     author: 'Heikki Ojanperä',
     url: 'www.Hipera.fi',
@@ -52,7 +52,7 @@ test('shows url, likes and user when the "view" button is clicked', async () => 
     <Blog blog={blog} user={mockUser} toggleVisibility={mockHandler} />
   )
 
-  
+
   const user = userEvent.setup()
 
   screen.debug()
@@ -70,9 +70,9 @@ test('shows url, likes and user when the "view" button is clicked', async () => 
   expect(screen.getByText(/likes/)).toBeVisible()
   expect(screen.getByText('TestUser')).toBeVisible()
 })
-  
+
 test('if like button is clicked twice, the event handler is called twice', async () => {
-   const blog = {
+  const blog = {
     title: 'Kolmas kurjuus',
     author: 'Heikki Ojanperä',
     url: 'www.Hipera.fi',
@@ -80,7 +80,7 @@ test('if like button is clicked twice, the event handler is called twice', async
     user: {
       name: 'TestUser'
     }
-  } 
+  }
   const mockUser = {
     id: '642f1b2f4f1a25630c5e8b9d',
     username: 'testuser',
