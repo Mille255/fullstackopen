@@ -18,5 +18,27 @@ describe('Blog app', () => {
     // ...
   })
 
+  describe('Login', () => {
+    test('succeeds with correct credentials', async ({ page }) => {
+      await page.goto('http://localhost:5173')
+
+      await page.getByLabel('username').fill('mluke')
+      await page.getByLabel('password').fill('salainen')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await expect(page.getByText('Masa Lukka logged in')).toBeVisible()
+    })
+   
+
+    test('fails with wrong credentials', async ({ page }) => {
+      await page.goto('http://localhost:5173')
+
+      await page.getByLabel('username').fill('mluk')
+      await page.getByLabel('password').fill('salainen')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await expect(page.getByText('wrong username or password')).toBeVisible()
+    })
+  })
 
 })
